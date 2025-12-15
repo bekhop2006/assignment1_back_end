@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/bekhop2006/assignment1_back_end#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.2.1"
   }
 }
