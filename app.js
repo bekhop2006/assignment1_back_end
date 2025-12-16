@@ -8,8 +8,32 @@ app.use(express.json());
 
 app.use(express.static('public'));
 
+// BMI Calculator function
+function calculateBMI(weight, height) {
+    const bmi = weight / (height * height);
+    let category;
+    let color;
+    
+    if (bmi < 18.5) {
+        category = 'Underweight';
+        color = 'blue';
+    } else if (bmi >= 18.5 && bmi < 24.9) {
+        category = 'Normal weight';
+        color = 'green';
+    } else if (bmi >= 25 && bmi < 29.9) {
+        category = 'Overweight';
+        color = 'yellow';
+    } else {
+        category = 'Obese';
+        color = 'red';
+    }
+    
+    return { bmi: bmi.toFixed(2), category, color };
+}
+
+// GET route - serve HTML form
 app.get('/', (req, res) => {
-    res.send('Hello, Zaynidin');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/json', (req, res) => {
@@ -84,6 +108,24 @@ app.delete('/users/:id', (req, res) => {
     
     users.splice(userIndex, 1);
     res.json({ message: 'User deleted' });
+});
+
+// POST route - calculate BMI
+app.post('/calculate-bmi', (req, res) => {
+    const weight = parseFloat(req.body.weight);
+    const height = parseFloat(req.body.height);
+    
+    // Validation
+    if (!weight || !height || weight <= 0 || height <= 0) {
+        return res.status(400).json({ 
+            error: 'Invalid input. Weight and height must be positive numbers.' 
+        });
+    }
+    
+    // Calculate BMI
+    const result = calculateBMI(weight, height);
+    
+    res.json(result);
 });
 
 app.listen(port, () => {
